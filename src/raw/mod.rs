@@ -1282,6 +1282,17 @@ impl<T, A: Allocator> RawTable<T, A> {
         self.table.is_bucket_full(index)
     }
 
+    /// Checks whether the bucket at `index` is not used
+    ///
+    /// # Safety
+    ///
+    /// The caller must ensure `index` is less than the number of buckets.
+    #[inline]
+    pub unsafe fn is_bucket_empty(&self, index: usize) -> bool {
+        let tag = *self.table.ctrl(index);
+        tag == Tag::EMPTY || tag == Tag::DELETED
+    }
+
     /// Returns an iterator over every element in the table. It is up to
     /// the caller to ensure that the `RawTable` outlives the `RawIter`.
     /// Because we cannot make the `next` method unsafe on the `RawIter`
